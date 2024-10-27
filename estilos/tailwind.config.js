@@ -13,6 +13,9 @@ module.exports = {
         'azul-claro': '#242cff',
         'azul-oscuro': '#0d1b3e'
       },
+      spacing: {
+        '42': '170px',
+      },
     },
   },
   plugins: [],
