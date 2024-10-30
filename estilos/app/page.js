@@ -2,18 +2,24 @@ import Colores from '@/components/Colores'
 import Medidas from '@/components/Medidas'
 import Estados from '@/components/Estados'
 import PseudoClases from '@/components/PseudoClases'
-
+import Responsive from './components/Responsive'
+import Flexbox from './components/Flexbox'
 export default function Home() {
   return (
     <>
       <h1 className="text-3xl font-bold underline">
-        Hello world!
+        Estilos con Tailwind!
       </h1>
-
+{/*
       <Colores />
       <Medidas />
       <Estados />
       <PseudoClases />
+
+      <Responsive />
+*/}
+      <Flexbox />
+
     </>
   )
 }

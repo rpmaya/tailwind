@@ -16,6 +16,10 @@ module.exports = {
       spacing: {
         '42': '170px',
       },
+      screens: {
+        'tablet': '900px',
+        // => @media (min-width: 640px) { ... }
+      },
     },
   },
   plugins: [],
