@@ -4,6 +4,7 @@ import Estados from '@/components/Estados'
 import PseudoClases from '@/components/PseudoClases'
 import Responsive from './components/Responsive'
 import Flexbox from './components/Flexbox'
+import Grid from './components/Grid'
 export default function Home() {
   return (
     <>
@@ -15,11 +16,10 @@ export default function Home() {
       <Medidas />
       <Estados />
       <PseudoClases />
-
       <Responsive />
-*/}
       <Flexbox />
-
+*/}
+      <Grid />
     </>
   )
 }
