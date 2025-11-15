@@ -865,7 +865,37 @@ En `app/globals.css`:
 <div className="flex items-center">Centro</div>
 <div className="flex items-end">Abajo</div>
 <div className="flex items-stretch">Estirar (por defecto)</div>
+
+// Place content (atajo para justify-content + align-content)
+<div className="flex place-content-center">Centrado completo</div>
+<div className="flex place-content-between">Espacio entre</div>
+<div className="flex place-content-around">Espacio alrededor</div>
+<div className="flex place-content-evenly">Espacio equitativo</div>
 ```
+
+**Nota sobre `place-content`:**
+- Es un atajo para aplicar `justify-content` y `align-content` simultáneamente
+- Útil cuando quieres el mismo comportamiento en ambos ejes
+- Funciona tanto con Flexbox como con Grid
+
+### Align Self (alineación individual)
+
+Controla la alineación de un elemento específico dentro del flex container, sobrescribiendo el valor de `items-*`:
+
+```jsx
+<div className="flex items-start h-40 gap-4 bg-gray-100">
+  <div className="self-start bg-blue-500 p-4">Arriba (self-start)</div>
+  <div className="self-center bg-green-500 p-4">Centro (self-center)</div>
+  <div className="self-end bg-red-500 p-4">Abajo (self-end)</div>
+</div>
+```
+
+**Clases disponibles:**
+- `self-auto` → Usa el valor de `items-*` del contenedor
+- `self-start` → Alinea al inicio
+- `self-center` → Centra el elemento
+- `self-end` → Alinea al final
+- `self-stretch` → Estira para ocupar todo el espacio
 
 ### Wrap (envolver elementos)
 
@@ -913,6 +943,49 @@ En `app/globals.css`:
   </div>
   <div className="flex-none w-32 bg-red-200 p-4">
     Ancho fijo de 128px
+  </div>
+</div>
+```
+
+**Clases útiles:**
+- `flex-1` → Crece y se reduce según el espacio disponible
+- `flex-auto` → Crece y se reduce basándose en su contenido
+- `flex-none` → No crece ni se reduce (tamaño fijo)
+- `grow` → Solo crece
+- `shrink` → Solo se reduce
+- `shrink-0` → No se reduce
+
+### Flex Basis
+
+Define el tamaño inicial de un elemento antes de distribuir el espacio restante:
+
+```jsx
+<div className="flex gap-4">
+  <div className="basis-1/4 bg-blue-500 p-4">25%</div>
+  <div className="basis-1/4 bg-green-500 p-4">25%</div>
+  <div className="basis-1/2 bg-red-500 p-4">50%</div>
+</div>
+```
+
+**Valores comunes:**
+- `basis-1/2` → 50% del contenedor
+- `basis-1/3` → 33.33% del contenedor
+- `basis-1/4` → 25% del contenedor
+- `basis-full` → 100% del contenedor
+- `basis-auto` → Basado en el contenido (por defecto)
+
+**Ejemplo con responsive:**
+
+```jsx
+<div className="flex gap-4">
+  <div className="basis-1/4 sm:basis-1/3 bg-purple-500 p-4">
+    25% en móvil, 33% en pantallas pequeñas
+  </div>
+  <div className="basis-1/4 sm:basis-1/3 bg-pink-500 p-4">
+    25% en móvil, 33% en pantallas pequeñas
+  </div>
+  <div className="basis-1/2 sm:basis-1/3 bg-orange-500 p-4">
+    50% en móvil, 33% en pantallas pequeñas
   </div>
 </div>
 ```
@@ -976,6 +1049,8 @@ Documentación: [https://tailwindcss.com/docs/grid-template-columns](https://tai
 
 ### Span (ocupar múltiples columnas/filas)
 
+#### Column Span (columnas)
+
 ```jsx
 <div className="grid grid-cols-6 gap-4">
   <div className="col-span-4 bg-blue-500 p-4">Ocupa 4 columnas</div>
@@ -984,6 +1059,65 @@ Documentación: [https://tailwindcss.com/docs/grid-template-columns](https://tai
   <div className="col-span-3 bg-yellow-500 p-4">Ocupa 3 columnas</div>
 </div>
 ```
+
+**Clases disponibles:**
+- `col-span-{n}` → Ocupa n columnas (1-12)
+- `col-span-full` → Ocupa todas las columnas disponibles
+
+#### Row Span (filas)
+
+Los elementos también pueden ocupar múltiples filas verticalmente:
+
+```jsx
+<div className="grid grid-cols-3 grid-rows-3 gap-4 h-96">
+  <div className="row-span-2 bg-blue-500 p-4 text-white">
+    Ocupa 2 filas
+  </div>
+  <div className="bg-green-500 p-4 text-white">1</div>
+  <div className="bg-green-500 p-4 text-white">2</div>
+  <div className="col-span-2 bg-red-500 p-4 text-white">
+    Ocupa 2 columnas
+  </div>
+  <div className="row-span-3 bg-purple-500 p-4 text-white h-full">
+    Ocupa 3 filas
+  </div>
+  <div className="bg-yellow-500 p-4 text-white">3</div>
+  <div className="bg-yellow-500 p-4 text-white">4</div>
+</div>
+```
+
+**Clases disponibles:**
+- `row-span-{n}` → Ocupa n filas (1-6)
+- `row-span-full` → Ocupa todas las filas disponibles
+
+#### Posicionamiento exacto con sintaxis arbitraria
+
+Puedes controlar exactamente desde qué línea empieza y termina un elemento:
+
+```jsx
+<div className="grid grid-cols-4 gap-4">
+  {/* Empieza en columna 2 y termina en columna 4 */}
+  <div className="col-start-2 col-end-4 bg-blue-500 p-4">
+    De columna 2 a 4
+  </div>
+
+  {/* Sintaxis abreviada con valores arbitrarios */}
+  <div className="col-[2/5] bg-green-500 p-4">
+    De columna 2 a 5
+  </div>
+
+  {/* Lo mismo para filas */}
+  <div className="row-[3/5] bg-red-500 p-4">
+    De fila 3 a 5
+  </div>
+</div>
+```
+
+**Sintaxis:**
+- `col-start-{n}` y `col-end-{n}` → Inicio y fin de columnas
+- `row-start-{n}` y `row-end-{n}` → Inicio y fin de filas
+- `col-[x/y]` → Sintaxis abreviada: de columna x a y
+- `row-[x/y]` → Sintaxis abreviada: de fila x a y
 
 ### Rows (filas)
 

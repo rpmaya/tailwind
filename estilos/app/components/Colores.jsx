@@ -7,7 +7,7 @@ export default function Colores() {
 
       <button className="bg-azul-claro/50 hover:bg-azul-oscuro text-white p-2 rounded-lg w-24 mx-auto block my-8">Suscríbete</button>
 
-      <div className="bg-gradient-to-r from-azul-claro to-azul-oscuro border-red-500 border-2">DIV</div>
+      <div className="bg-gradient-to-r from-azul-claro to-azul-oscuro border-red-500 border-2 p-4">DIV</div>
 
       <div className="text-4xl font-extrabold">
         <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
