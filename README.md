@@ -663,38 +663,76 @@ Documentación: [https://tailwindcss.com/docs/hover-focus-and-other-states#befor
 
 ---
 
-## Diseño Responsive
+## Diseño Responsive con Breakpoints
 
 Documentación: [https://tailwindcss.com/docs/responsive-design](https://tailwindcss.com/docs/responsive-design)
 
-Tailwind usa un enfoque **mobile-first**: las clases sin prefijo se aplican a todos los tamaños, y los breakpoints añaden estilos para pantallas más grandes.
+### Concepto fundamental: Mobile-First
 
-### Breakpoints por defecto
+Tailwind usa un enfoque **mobile-first**:
+- Las clases **sin prefijo** se aplican a **todos** los tamaños de pantalla
+- Los **breakpoints** (prefijos como `md:`, `lg:`) **añaden o sobrescriben** estilos para pantallas más grandes
+- Cada breakpoint es un **mínimo** (≥), no un máximo
 
-| Prefijo | Tamaño mínimo | Dispositivo típico |
-|---------|---------------|--------------------|
-| **(ninguno)** | 0px | Móvil (por defecto) |
-| `sm:` | 640px | Móvil grande / Tablet pequeña |
-| `md:` | 768px | Tablet |
-| `lg:` | 1024px | Laptop |
-| `xl:` | 1280px | Desktop |
-| `2xl:` | 1536px | Desktop grande |
-
-### Ejemplo básico
-
+**Ejemplo conceptual:**
 ```jsx
-<div className="text-sm md:text-base lg:text-lg xl:text-xl">
-  Texto que crece según el tamaño de pantalla
+<div className="text-sm md:text-base lg:text-xl">
+  Texto responsive
 </div>
 ```
 
-**Comportamiento:**
-- **Móvil (< 768px)**: `text-sm` (14px)
-- **Tablet (≥ 768px)**: `text-base` (16px)
-- **Desktop (≥ 1024px)**: `text-lg` (18px)
-- **Desktop grande (≥ 1280px)**: `text-xl` (20px)
+**Cómo se aplica:**
+1. **Móvil (0-767px)**: Solo `text-sm` (14px)
+2. **Tablet (768px+)**: `text-sm` es **sobrescrito** por `md:text-base` (16px)
+3. **Desktop (1024px+)**: `md:text-base` es **sobrescrito** por `lg:text-xl` (20px)
 
-### Grid responsive
+### Breakpoints por defecto
+
+| Prefijo | Tamaño mínimo | Media Query | Dispositivo típico | Ancho común |
+|---------|---------------|-------------|-------------------|-------------|
+| **(ninguno)** | 0px | - | Móvil (por defecto) | 320-639px |
+| `sm:` | 640px | `@media (min-width: 640px)` | Móvil grande / Tablet pequeña | 640-767px |
+| `md:` | 768px | `@media (min-width: 768px)` | Tablet | 768-1023px |
+| `lg:` | 1024px | `@media (min-width: 1024px)` | Laptop | 1024-1279px |
+| `xl:` | 1280px | `@media (min-width: 1280px)` | Desktop | 1280-1535px |
+| `2xl:` | 1536px | `@media (min-width: 1536px)` | Desktop grande / 4K | 1536px+ |
+
+**Nota importante**: Los breakpoints son **acumulativos**. Si defines `md:text-base`, ese estilo se aplicará en `md`, `lg`, `xl` y `2xl` hasta que lo sobrescribas.
+
+### Cómo funcionan los breakpoints en la práctica
+
+#### Ejemplo 1: Tamaño de texto
+
+```jsx
+<h1 className="text-2xl md:text-4xl lg:text-5xl xl:text-6xl">
+  Título que crece con la pantalla
+</h1>
+```
+
+**Comportamiento paso a paso:**
+- **Móvil (< 768px)**: `text-2xl` → 24px
+- **Tablet (768-1023px)**: `md:text-4xl` → 36px
+- **Laptop (1024-1279px)**: `lg:text-5xl` → 48px
+- **Desktop (≥ 1280px)**: `xl:text-6xl` → 60px
+
+#### Ejemplo 2: Padding responsive
+
+```jsx
+<div className="p-4 md:p-8 lg:p-12 xl:p-16">
+  El padding aumenta gradualmente
+</div>
+```
+
+**Visualización:**
+```
+Móvil:          Tablet:         Desktop:
+┌─────────┐     ┌───────────┐   ┌─────────────┐
+│p-4      │     │  p-8      │   │   p-12      │
+│ (16px)  │     │  (32px)   │   │   (48px)    │
+└─────────┘     └───────────┘   └─────────────┘
+```
+
+### Grid responsive en detalle
 
 ```jsx
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -702,71 +740,232 @@ Tailwind usa un enfoque **mobile-first**: las clases sin prefijo se aplican a to
   <div className="bg-blue-200 p-4">Card 2</div>
   <div className="bg-blue-200 p-4">Card 3</div>
   <div className="bg-blue-200 p-4">Card 4</div>
+  <div className="bg-blue-200 p-4">Card 5</div>
+  <div className="bg-blue-200 p-4">Card 6</div>
+  <div className="bg-blue-200 p-4">Card 7</div>
+  <div className="bg-blue-200 p-4">Card 8</div>
 </div>
 ```
 
-**Comportamiento:**
-- **Móvil**: 1 columna (elementos apilados)
-- **Small (≥ 640px)**: 2 columnas
-- **Large (≥ 1024px)**: 3 columnas
-- **Extra large (≥ 1280px)**: 4 columnas
+**Comportamiento en cada breakpoint:**
+
+| Pantalla | Breakpoint | Columnas | Descripción |
+|----------|------------|----------|-------------|
+| **< 640px** | (ninguno) | 1 | Apilado vertical |
+| **640-1023px** | `sm:` | 2 | Dos columnas |
+| **1024-1279px** | `lg:` | 3 | Tres columnas |
+| **≥ 1280px** | `xl:` | 4 | Cuatro columnas |
+
+**Visualización:**
+```
+Móvil (1 col):  Small (2 cols): Large (3 cols):  XL (4 cols):
+┌──────────┐    ┌─────┬─────┐   ┌────┬────┬────┐ ┌───┬───┬───┬───┐
+│    1     │    │  1  │  2  │   │ 1  │ 2  │ 3  │ │ 1 │ 2 │ 3 │ 4 │
+├──────────┤    ├─────┼─────┤   ├────┼────┼────┤ ├───┼───┼───┼───┤
+│    2     │    │  3  │  4  │   │ 4  │ 5  │ 6  │ │ 5 │ 6 │ 7 │ 8 │
+├──────────┤    ├─────┼─────┤   ├────┼────┼────┤ └───┴───┴───┴───┘
+│    3     │    │  5  │  6  │   │ 7  │ 8  │    │
+└──────────┘    └─────┴─────┘   └────┴────┴────┘
+```
+
+### Gap responsive
+
+El espaciado también puede adaptarse según el tamaño:
+
+```jsx
+<div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 lg:gap-6 xl:gap-8">
+  {/* Gap pequeño en móvil, crece en pantallas más grandes */}
+</div>
+```
+
+**Valores según pantalla:**
+- Móvil: `gap-2` → 8px
+- Tablet: `md:gap-4` → 16px
+- Laptop: `lg:gap-6` → 24px
+- Desktop: `xl:gap-8` → 32px
 
 ### Ocultar/Mostrar elementos según el tamaño
 
+Esta es una técnica muy común para adaptar la interfaz:
+
+#### Ocultar en móvil, mostrar en desktop
+
 ```jsx
-// Visible solo en desktop
 <div className="hidden lg:block">
-  Este contenido solo se ve en pantallas grandes
+  Este contenido solo se ve en pantallas grandes (≥ 1024px)
 </div>
+```
 
-// Visible solo en móvil
+**Explicación:**
+- `hidden` → Oculto por defecto en todas las pantallas
+- `lg:block` → Visible desde laptop en adelante
+
+#### Mostrar en móvil, ocultar en desktop
+
+```jsx
 <div className="block lg:hidden">
-  Este contenido solo se ve en móviles
+  Este contenido solo se ve en móviles y tablets (< 1024px)
 </div>
+```
 
-// Menú hamburguesa (móvil) vs menú horizontal (desktop)
-<nav>
-  {/* Botón hamburguesa - solo móvil */}
-  <button className="md:hidden">
-    ☰
+**Explicación:**
+- `block` → Visible por defecto
+- `lg:hidden` → Oculto desde laptop en adelante
+
+#### Ejemplo práctico: Menú responsive
+
+```jsx
+<nav className="flex justify-between items-center p-4 bg-gray-800 text-white">
+  <div className="text-xl font-bold">Mi App</div>
+
+  {/* Botón hamburguesa - SOLO móvil y tablet */}
+  <button className="md:hidden bg-gray-700 p-2 rounded">
+    ☰ Menú
   </button>
 
-  {/* Menú completo - solo desktop */}
-  <div className="hidden md:flex gap-4">
-    <a href="#">Inicio</a>
-    <a href="#">Servicios</a>
-    <a href="#">Contacto</a>
+  {/* Menú completo - SOLO desktop */}
+  <div className="hidden md:flex gap-6">
+    <a href="#" className="hover:text-gray-300">Inicio</a>
+    <a href="#" className="hover:text-gray-300">Servicios</a>
+    <a href="#" className="hover:text-gray-300">Productos</a>
+    <a href="#" className="hover:text-gray-300">Contacto</a>
   </div>
 </nav>
 ```
 
-### Padding y margin responsive
+**Comportamiento:**
+- **< 768px**: Se ve el botón ☰, el menú está oculto
+- **≥ 768px**: El botón está oculto, se ven todos los enlaces
+
+### Combinando múltiples propiedades responsive
+
+Puedes hacer que cada aspecto de un elemento sea responsive:
 
 ```jsx
-<div className="p-4 md:p-8 lg:p-12">
-  El padding aumenta en pantallas más grandes
+<div className="
+  w-full md:w-1/2 lg:w-1/3
+  p-4 md:p-6 lg:p-8
+  text-sm md:text-base lg:text-lg
+  bg-blue-500 md:bg-green-500 lg:bg-purple-500
+  rounded-lg md:rounded-xl lg:rounded-2xl
+">
+  Card totalmente responsive
 </div>
+```
 
-<section className="my-8 md:my-16 lg:my-24">
-  Sección con márgenes verticales adaptativos
+**Cambios según pantalla:**
+
+| Propiedad | Móvil | Tablet (md) | Desktop (lg) |
+|-----------|-------|-------------|--------------|
+| Ancho | 100% | 50% | 33.33% |
+| Padding | 16px | 24px | 32px |
+| Texto | 14px | 16px | 18px |
+| Color | Azul | Verde | Morado |
+| Bordes | 8px | 12px | 16px |
+
+### Flexbox y Grid responsive combinados
+
+#### Layout adaptativo completo
+
+```jsx
+<div className="
+  flex flex-col md:flex-row
+  gap-4 md:gap-6 lg:gap-8
+  p-4 md:p-8
+">
+  {/* Sidebar - arriba en móvil, izquierda en desktop */}
+  <aside className="
+    w-full md:w-64
+    bg-gray-200 p-4 rounded-lg
+  ">
+    Sidebar
+  </aside>
+
+  {/* Contenido principal - debajo en móvil, derecha en desktop */}
+  <main className="
+    flex-1
+    bg-white p-6 rounded-lg shadow
+  ">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="bg-blue-100 p-4 rounded">Item 1</div>
+      <div className="bg-blue-100 p-4 rounded">Item 2</div>
+      <div className="bg-blue-100 p-4 rounded">Item 3</div>
+    </div>
+  </main>
+</div>
+```
+
+**Comportamiento:**
+```
+Móvil:              Desktop:
+┌──────────┐        ┌────┬──────────────┐
+│ Sidebar  │        │Side│   Main       │
+├──────────┤   →    │bar │ ┌──┬──┬──┐   │
+│   Main   │        │    │ │ 1│ 2│ 3│   │
+│ ┌──┐     │        │    │ └──┴──┴──┘   │
+│ │ 1│     │        └────┴──────────────┘
+│ └──┘     │
+└──────────┘
+```
+
+### Padding y margin responsive estratégico
+
+```jsx
+<section className="
+  px-4 md:px-8 lg:px-16 xl:px-24
+  py-8 md:py-12 lg:py-16 xl:py-20
+">
+  {/* Más espacio en pantallas grandes para mejor legibilidad */}
+  <div className="max-w-7xl mx-auto">
+    <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6 lg:mb-8">
+      Título de sección
+    </h2>
+    <p className="text-base md:text-lg lg:text-xl leading-relaxed">
+      Contenido con tipografía responsive
+    </p>
+  </div>
 </section>
 ```
 
+**Espaciado según pantalla:**
+
+| Pantalla | Padding horizontal | Padding vertical |
+|----------|-------------------|------------------|
+| Móvil | 16px | 32px |
+| Tablet | 32px | 48px |
+| Laptop | 64px | 64px |
+| Desktop | 96px | 80px |
+
+### Display responsive
+
+Cambia el tipo de display según el tamaño:
+
+```jsx
+<div className="block md:flex md:justify-between md:items-center">
+  <div>Logo</div>
+  <div>Navegación</div>
+</div>
+```
+
+- **Móvil**: Apilado vertical (`block`)
+- **Tablet+**: Flexbox horizontal con espacio entre elementos
+
 ### Personalizar breakpoints
 
-En `tailwind.config.js`:
+En `tailwind.config.js` puedes definir tus propios breakpoints:
 
 ```javascript
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   theme: {
     screens: {
-      'xs': '475px',
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px',
-      '3xl': '1920px',
+      'xs': '475px',      // Móvil grande
+      'sm': '640px',      // Tablet pequeña
+      'md': '768px',      // Tablet
+      'lg': '1024px',     // Laptop
+      'xl': '1280px',     // Desktop
+      '2xl': '1536px',    // Desktop grande
+      '3xl': '1920px',    // 4K
     },
   },
 }
@@ -774,22 +973,94 @@ module.exports = {
 
 Documentación: [https://tailwindcss.com/docs/responsive-design#using-custom-breakpoints](https://tailwindcss.com/docs/responsive-design#using-custom-breakpoints)
 
+**Uso:**
+```jsx
+<div className="text-sm xs:text-base 3xl:text-2xl">
+  Texto con breakpoints personalizados
+</div>
+```
+
+### Breakpoints max-width (max-*)
+
+Por defecto Tailwind usa `min-width` (mobile-first), pero puedes usar `max-*` para aplicar estilos solo hasta cierto tamaño:
+
+**Configuración en `tailwind.config.js`:**
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      screens: {
+        'max-md': {'max': '767px'}, // Solo móvil y tablet pequeña
+      },
+    },
+  },
+}
+```
+
+**Uso:**
+```jsx
+<div className="text-xl max-md:text-sm">
+  Texto grande en desktop, pequeño en móvil
+</div>
+```
+
 ### Ejemplo completo: Card responsive
 
 ```jsx
 <div className="
-  w-full sm:w-1/2 lg:w-1/3
+  w-full sm:w-1/2 lg:w-1/3 xl:w-1/4
   p-4 sm:p-6 lg:p-8
-  bg-white rounded-lg shadow-md
+  bg-white dark:bg-gray-800
+  rounded-lg shadow-md hover:shadow-xl
+  transition-shadow duration-300
 ">
-  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">
-    Título responsive
-  </h2>
-  <p className="mt-2 text-sm md:text-base">
-    Descripción que se adapta
+  <img
+    src="/producto.jpg"
+    alt="Producto"
+    className="w-full h-48 md:h-56 lg:h-64 object-cover rounded-t-lg"
+  />
+  <h3 className="
+    text-xl md:text-2xl lg:text-3xl
+    font-bold
+    mt-4 mb-2
+  ">
+    Título del producto
+  </h3>
+  <p className="
+    text-sm md:text-base
+    text-gray-600 dark:text-gray-300
+    mb-4
+  ">
+    Descripción que se adapta al tamaño
   </p>
+  <button className="
+    w-full md:w-auto
+    px-6 py-2 md:py-3
+    bg-blue-500 hover:bg-blue-600
+    text-white font-semibold
+    rounded-lg
+    transition-colors
+  ">
+    Añadir al carrito
+  </button>
 </div>
 ```
+
+**Comportamiento responsive:**
+1. **Móvil**: Card ocupa todo el ancho, botón completo
+2. **Tablet**: Card ocupa 50%, textos más grandes
+3. **Laptop**: Card ocupa 33%, más padding
+4. **Desktop**: Card ocupa 25%, máximo tamaño de texto
+
+### Consejos para diseño responsive
+
+1. **Empieza siempre por móvil** - diseña para pantallas pequeñas primero
+2. **Usa breakpoints estratégicamente** - no necesitas definir cada propiedad en cada breakpoint
+3. **Mantén consistencia** - usa los mismos breakpoints en todo el proyecto
+4. **Prueba en dispositivos reales** - los emuladores no siempre son precisos
+5. **Usa max-w-* para limitar el ancho** - evita líneas de texto muy largas en pantallas grandes
+6. **Gap responsive mejora la experiencia** - más espacio en pantallas grandes
+7. **Piensa en touch vs mouse** - elementos más grandes en móvil para tocar fácilmente
 
 ---
 
@@ -994,9 +1265,25 @@ Define el tamaño inicial de un elemento antes de distribuir el espacio restante
 
 ## Grid
 
-Grid CSS es ideal para diseños en dos dimensiones (filas y columnas).
+Grid CSS es ideal para diseños en dos dimensiones (filas y columnas). Es la herramienta perfecta para crear layouts complejos de forma declarativa y responsive.
 
 Documentación: [https://tailwindcss.com/docs/grid-template-columns](https://tailwindcss.com/docs/grid-template-columns)
+
+### ¿Cuándo usar Grid vs Flexbox?
+
+| Característica | Grid | Flexbox |
+|----------------|------|---------|
+| **Dimensiones** | 2D (filas y columnas) | 1D (una dirección) |
+| **Mejor para** | Layouts completos, galerías, dashboards | Navegación, alineación simple |
+| **Control** | Padre controla posicionamiento | Items más flexibles |
+| **Ejemplo de uso** | Diseño de página, galería de productos | Navbar, cards horizontales |
+
+### Conceptos fundamentales de Grid
+
+Grid divide el contenedor en **filas** y **columnas**, creando una cuadrícula donde puedes colocar elementos. Los elementos hijos pueden:
+- Ocupar una o varias celdas
+- Posicionarse exactamente donde quieras
+- Adaptarse automáticamente al espacio disponible
 
 ### Grid básico
 
@@ -1013,10 +1300,16 @@ Documentación: [https://tailwindcss.com/docs/grid-template-columns](https://tai
 
 **Resultado**: Grid de 3 columnas con 2 filas automáticas
 
+**Desglose:**
+- `grid` → Activa CSS Grid en el contenedor
+- `grid-cols-3` → Define 3 columnas de igual tamaño
+- `gap-4` → Espacio de 1rem (16px) entre elementos
+- Las filas se crean automáticamente según sea necesario
+
 ### Diferentes números de columnas
 
 ```jsx
-// 1 columna
+// 1 columna (apilado verticalmente)
 <div className="grid grid-cols-1 gap-4">...</div>
 
 // 2 columnas
@@ -1025,11 +1318,18 @@ Documentación: [https://tailwindcss.com/docs/grid-template-columns](https://tai
 // 4 columnas
 <div className="grid grid-cols-4 gap-4">...</div>
 
-// 12 columnas (como Bootstrap)
+// 6 columnas
+<div className="grid grid-cols-6 gap-4">...</div>
+
+// 12 columnas (como Bootstrap - máxima flexibilidad)
 <div className="grid grid-cols-12 gap-4">...</div>
 ```
 
-### Grid responsive
+**Nota**: `grid-cols-12` es muy útil porque 12 es divisible por 1, 2, 3, 4 y 6, permitiendo layouts muy flexibles.
+
+### Grid responsive con breakpoints
+
+La verdadera potencia de Grid aparece cuando lo combinas con breakpoints responsivos:
 
 ```jsx
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1042,14 +1342,55 @@ Documentación: [https://tailwindcss.com/docs/grid-template-columns](https://tai
 </div>
 ```
 
-**Comportamiento:**
-- **Móvil**: 1 columna
-- **Tablet (≥ 768px)**: 2 columnas
-- **Desktop (≥ 1024px)**: 3 columnas
+**Comportamiento paso a paso:**
+1. **Móvil (< 768px)**: `grid-cols-1` → 1 columna (apilado)
+2. **Tablet (≥ 768px)**: `md:grid-cols-2` → 2 columnas
+3. **Desktop (≥ 1024px)**: `lg:grid-cols-3` → 3 columnas
+
+**Visualización:**
+```
+Móvil:      Tablet:     Desktop:
+┌─────┐     ┌───┬───┐   ┌──┬──┬──┐
+│  1  │     │ 1 │ 2 │   │1 │2 │3 │
+├─────┤     ├───┼───┤   ├──┼──┼──┤
+│  2  │     │ 3 │ 4 │   │4 │5 │6 │
+├─────┤     ├───┼───┤   └──┴──┴──┘
+│  3  │     │ 5 │ 6 │
+└─────┘     └───┴───┘
+```
+
+### Gap (espaciado entre elementos)
+
+El gap controla el espacio entre filas y columnas:
+
+```jsx
+// Gap uniforme
+<div className="grid grid-cols-3 gap-2">Espacio pequeño (8px)</div>
+<div className="grid grid-cols-3 gap-4">Espacio medio (16px)</div>
+<div className="grid grid-cols-3 gap-8">Espacio grande (32px)</div>
+
+// Gap diferente horizontal y vertical
+<div className="grid grid-cols-3 gap-x-4 gap-y-8">
+  {/* Gap horizontal de 16px, vertical de 32px */}
+</div>
+
+// Gap responsive
+<div className="grid grid-cols-3 gap-2 md:gap-4 lg:gap-6">
+  {/* Gap aumenta en pantallas más grandes */}
+</div>
+```
+
+**Valores comunes de gap:**
+- `gap-2` → 8px (compacto)
+- `gap-4` → 16px (estándar)
+- `gap-6` → 24px (espacioso)
+- `gap-8` → 32px (muy espacioso)
 
 ### Span (ocupar múltiples columnas/filas)
 
 #### Column Span (columnas)
+
+Con `col-span` puedes hacer que un elemento ocupe múltiples columnas:
 
 ```jsx
 <div className="grid grid-cols-6 gap-4">
@@ -1060,9 +1401,33 @@ Documentación: [https://tailwindcss.com/docs/grid-template-columns](https://tai
 </div>
 ```
 
+**Visualización:**
+```
+┌─────────────────┬─────┐
+│   4 columnas    │  2  │
+├────────┬────────┴─────┤
+│   3    │      3       │
+└────────┴──────────────┘
+```
+
 **Clases disponibles:**
-- `col-span-{n}` → Ocupa n columnas (1-12)
+- `col-span-1` hasta `col-span-12` → Ocupa n columnas
 - `col-span-full` → Ocupa todas las columnas disponibles
+
+**Ejemplo práctico: Layout de blog**
+```jsx
+<div className="grid grid-cols-12 gap-4">
+  {/* Header completo */}
+  <header className="col-span-full bg-blue-500 p-4">Header</header>
+
+  {/* Contenido principal (8 cols) y sidebar (4 cols) */}
+  <main className="col-span-8 bg-gray-100 p-4">Contenido principal</main>
+  <aside className="col-span-4 bg-gray-200 p-4">Sidebar</aside>
+
+  {/* Footer completo */}
+  <footer className="col-span-full bg-blue-500 p-4">Footer</footer>
+</div>
+```
 
 #### Row Span (filas)
 
@@ -1087,10 +1452,31 @@ Los elementos también pueden ocupar múltiples filas verticalmente:
 ```
 
 **Clases disponibles:**
-- `row-span-{n}` → Ocupa n filas (1-6)
+- `row-span-1` hasta `row-span-6` → Ocupa n filas
 - `row-span-full` → Ocupa todas las filas disponibles
+- `grid-rows-{n}` → Define el número de filas explícitas
 
-#### Posicionamiento exacto con sintaxis arbitraria
+**Importante**: Para que `row-span` funcione correctamente, a menudo necesitas:
+- Definir `grid-rows-{n}` en el contenedor
+- Asignar una altura al contenedor o usar `h-full` en los items
+
+#### Span responsive
+
+Puedes combinar span con breakpoints para layouts adaptativos:
+
+```jsx
+<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+  {/* En móvil ocupa 2 cols (toda la fila), en tablet 2, en desktop 3 */}
+  <div className="col-span-2 md:col-span-2 lg:col-span-3 bg-blue-500 p-4">
+    Item destacado
+  </div>
+
+  <div className="bg-gray-200 p-4">Item normal</div>
+  <div className="bg-gray-200 p-4">Item normal</div>
+</div>
+```
+
+#### Posicionamiento exacto con col-start y col-end
 
 Puedes controlar exactamente desde qué línea empieza y termina un elemento:
 
@@ -1103,7 +1489,7 @@ Puedes controlar exactamente desde qué línea empieza y termina un elemento:
 
   {/* Sintaxis abreviada con valores arbitrarios */}
   <div className="col-[2/5] bg-green-500 p-4">
-    De columna 2 a 5
+    De columna 2 a 5 (sintaxis abreviada)
   </div>
 
   {/* Lo mismo para filas */}
@@ -1114,12 +1500,25 @@ Puedes controlar exactamente desde qué línea empieza y termina un elemento:
 ```
 
 **Sintaxis:**
-- `col-start-{n}` y `col-end-{n}` → Inicio y fin de columnas
-- `row-start-{n}` y `row-end-{n}` → Inicio y fin de filas
-- `col-[x/y]` → Sintaxis abreviada: de columna x a y
-- `row-[x/y]` → Sintaxis abreviada: de fila x a y
+- `col-start-{n}` → Empieza en la línea de columna n
+- `col-end-{n}` → Termina en la línea de columna n
+- `col-[x/y]` → Sintaxis abreviada: empieza en x, termina en y
+- `row-start-{n}` y `row-end-{n}` → Equivalente para filas
+- `row-[x/y]` → Sintaxis abreviada para filas
 
-### Rows (filas)
+**Entendiendo las líneas de Grid:**
+```
+Líneas de columna:  1    2    3    4    5
+                    ┌────┬────┬────┬────┐
+                    │    │    │    │    │
+                    │ 1  │ 2  │ 3  │ 4  │
+                    │    │    │    │    │
+                    └────┴────┴────┴────┘
+
+col-start-2 col-end-4 ocuparía las columnas 2 y 3 (de línea 2 a línea 4)
+```
+
+### Grid con filas explícitas
 
 ```jsx
 <div className="grid grid-rows-3 grid-flow-col gap-4 h-64">
@@ -1132,7 +1531,12 @@ Puedes controlar exactamente desde qué línea empieza y termina un elemento:
 </div>
 ```
 
-### Place items (alinear contenido)
+**Explicación:**
+- `grid-rows-3` → 3 filas explícitas
+- `grid-flow-col` → Los elementos fluyen en columnas (vertical primero)
+- Sin `grid-flow-col`, los elementos fluirían en filas (horizontal primero, por defecto)
+
+### Place items (alinear contenido dentro de las celdas)
 
 ```jsx
 <div className="grid grid-cols-3 place-items-center gap-4 h-64 bg-gray-100">
@@ -1142,24 +1546,136 @@ Puedes controlar exactamente desde qué línea empieza y termina un elemento:
 </div>
 ```
 
-### Ejemplo: Galería de imágenes
+**Opciones de alineación:**
+- `place-items-start` → Arriba e izquierda
+- `place-items-center` → Centrado completo
+- `place-items-end` → Abajo y derecha
+- `place-items-stretch` → Estira para llenar la celda (por defecto)
+
+**También puedes controlar justify e items por separado:**
+```jsx
+<div className="grid justify-items-center items-start">
+  {/* Centrado horizontalmente, arriba verticalmente */}
+</div>
+```
+
+### Ejemplo práctico: Layout de página web completa
+
+```jsx
+<div className="grid grid-cols-1 md:grid-cols-12 gap-4 min-h-screen p-4">
+  {/* Header - ocupa todo el ancho */}
+  <header className="md:col-span-full bg-blue-600 text-white p-6 rounded-lg">
+    <h1 className="text-2xl font-bold">Mi Sitio Web</h1>
+  </header>
+
+  {/* Sidebar - visible solo en tablet+ */}
+  <aside className="hidden md:block md:col-span-3 bg-gray-200 p-4 rounded-lg">
+    <nav>
+      <ul className="space-y-2">
+        <li>Inicio</li>
+        <li>Servicios</li>
+        <li>Contacto</li>
+      </ul>
+    </nav>
+  </aside>
+
+  {/* Contenido principal */}
+  <main className="md:col-span-9 bg-white p-6 rounded-lg shadow">
+    <h2 className="text-xl font-bold mb-4">Contenido Principal</h2>
+    <p>Lorem ipsum dolor sit amet...</p>
+  </main>
+
+  {/* Footer - ocupa todo el ancho */}
+  <footer className="md:col-span-full bg-gray-800 text-white p-4 rounded-lg text-center">
+    © 2024 Mi Sitio Web
+  </footer>
+</div>
+```
+
+### Ejemplo: Galería de imágenes responsive
 
 ```jsx
 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-  <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+  <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden hover:scale-105 transition">
     <img src="/img1.jpg" alt="1" className="w-full h-full object-cover" />
   </div>
-  <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+  <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden hover:scale-105 transition">
     <img src="/img2.jpg" alt="2" className="w-full h-full object-cover" />
   </div>
-  <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+  <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden hover:scale-105 transition">
     <img src="/img3.jpg" alt="3" className="w-full h-full object-cover" />
   </div>
-  <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+  <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden hover:scale-105 transition">
     <img src="/img4.jpg" alt="4" className="w-full h-full object-cover" />
   </div>
 </div>
 ```
+
+**Características destacadas:**
+- `aspect-square` → Mantiene ratio 1:1 (cuadrado perfecto)
+- `object-cover` → La imagen cubre toda el área sin deformarse
+- `hover:scale-105` → Efecto de zoom al pasar el ratón
+- Grid responsive: 2, 3 o 4 columnas según el tamaño
+
+### Ejemplo: Dashboard con diferentes tamaños
+
+```jsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+  {/* Métrica destacada - ocupa más espacio */}
+  <div className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-blue-500 to-blue-700 text-white p-6 rounded-xl shadow-lg">
+    <h3 className="text-sm font-semibold opacity-90">Ventas Totales</h3>
+    <p className="text-4xl font-bold mt-2">$125,430</p>
+    <p className="text-sm mt-2 opacity-75">+12.5% vs mes anterior</p>
+  </div>
+
+  {/* Métricas normales */}
+  <div className="bg-white p-6 rounded-xl shadow">
+    <h3 className="text-sm font-semibold text-gray-600">Usuarios</h3>
+    <p className="text-2xl font-bold mt-2">2,543</p>
+  </div>
+
+  <div className="bg-white p-6 rounded-xl shadow">
+    <h3 className="text-sm font-semibold text-gray-600">Pedidos</h3>
+    <p className="text-2xl font-bold mt-2">187</p>
+  </div>
+
+  {/* Gráfico - ocupa todo el ancho en móvil */}
+  <div className="md:col-span-2 lg:col-span-4 bg-white p-6 rounded-xl shadow">
+    <h3 className="font-semibold mb-4">Gráfico de ventas</h3>
+    <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
+      [Aquí iría tu gráfico]
+    </div>
+  </div>
+</div>
+```
+
+### Auto-fit y Auto-fill (Grid avanzado)
+
+Para grids verdaderamente fluidos que se adaptan automáticamente:
+
+```jsx
+{/* Las columnas se crean automáticamente, mínimo 200px cada una */}
+<div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+  <div className="bg-blue-200 p-4">Item 1</div>
+  <div className="bg-blue-200 p-4">Item 2</div>
+  <div className="bg-blue-200 p-4">Item 3</div>
+  <div className="bg-blue-200 p-4">Item 4</div>
+</div>
+```
+
+**Diferencia:**
+- `auto-fit` → Colapsa las columnas vacías (items se expanden)
+- `auto-fill` → Mantiene las columnas vacías (items conservan su tamaño)
+
+### Consejos prácticos para usar Grid
+
+1. **Usa grid-cols-12 para máxima flexibilidad** en layouts complejos
+2. **Combina con breakpoints** para diseños responsive
+3. **gap-4 es un buen valor por defecto** para espaciado
+4. **col-span-full es útil** para headers y footers
+5. **Define height en el contenedor** cuando uses row-span
+6. **aspect-ratio** es perfecto para galerías de imágenes
+7. **place-items-center** para centrar contenido fácilmente
 
 ---
 
