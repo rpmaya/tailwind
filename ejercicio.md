@@ -290,17 +290,3 @@ export default function Ejercicio() {
   )
 }
 ```
-
----
-
-## Tiempo Estimado
-
-- **Tiempo sugerido**: 2-3 horas
-- **Dificultad**: Media-Alta
-- **Conocimientos previos**: Grid, Flexbox, Breakpoints responsive
-
----
-
-**¡Buena suerte! 🚀**
-
-*Recuerda: La práctica hace al maestro. No te frustres si algo no sale a la primera, consulta la documentación y los ejemplos.*
